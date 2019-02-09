@@ -19,6 +19,10 @@ header .row{
 	border-bottom:0.25px solid #2C365E;
 }
 
+.frame{
+	border:0.25px solid #2C365E;
+}
+
 footer{
 	border-left:0.25px solid #2C365E;
 	bottom:0;
@@ -51,6 +55,10 @@ a:hover{
 }
 
 header a{
+	all: unset;
+}
+
+a.ambient{
 	all: unset;
 }
 
