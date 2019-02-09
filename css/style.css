@@ -20,6 +20,7 @@ header .row{
 }
 
 .frame{
+	padding: 1px;
 	border:0.25px solid #2C365E;
 }
 
