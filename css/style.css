@@ -7,7 +7,6 @@
 /* General stylings & positioning */
 
 * {
-
 	box-sizing:border-box;
 	font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
 }
@@ -27,9 +26,7 @@ footer{
 	padding:2%;
 }
 
-
-/* Typography (text colors, fonts) & text positioning */
-
+/* Content elements */
 
 h1{
 	margin:0;
@@ -38,10 +35,6 @@ h1{
 
 h2{
 	margin-top: 40px;
-}
-h2.contentLabel{
-	margin-top: -10px;
-	padding-bottom: 1%;
 }
 
 h3{
@@ -58,7 +51,7 @@ a:hover{
 }
 
 
-/* Colors */
+/* Green Sheme */
 
 #titleBox{
 	color:#006F6F;
@@ -74,11 +67,15 @@ a:hover{
 	color: #C8FFFF;
 }
 
+/* Grey Sheme */
+
 .greyScheme{
 	color:#2C365E;
 	background-color:#3A3D47;
+}
 
-	/*#D5D7D8;   #454238;*/
+.row{
+	background-color:#FFFDF5;
 }
 
 .greyScheme .row{
@@ -88,12 +85,6 @@ a:hover{
 .greyScheme a{
 	color: #2C365E;
 }
-
-
-.row{
-	background-color:#FFFDF5;/*#EAEBEB*/
-}
-
 
 ::-moz-selection {
 	background:rgba(44,54,94,0.99);/*#2C365E*/
