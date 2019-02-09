@@ -50,6 +50,9 @@ a:hover{
 	opacity:0.65;
 }
 
+header a{
+	all: unset;
+}
 
 /* Green Sheme */
 
