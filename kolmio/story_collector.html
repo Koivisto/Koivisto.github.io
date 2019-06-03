@@ -1,0 +1,55 @@
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="background-color: #ebd1cb; font-family: 'Open Sans';">
+
+<style type="text/css">
+
+body{
+	background-color: #ebd1cc;
+	font-family: 'Open Sans';
+	font-weight: 200;
+}
+input{
+	width: 100%;
+	max-width: 600px;
+	font-family: 'Open Sans';
+	font-weight: 200;
+	font-size:1em;
+	padding:1em;
+	border-color: #000000;
+	border-width: 1px;
+}
+textarea{
+	width: 100%;
+	max-width: 600px;
+	font-family: 'Open Sans';
+	font-weight: 200;
+	font-size:1em;
+	padding:1em;
+	border-color: #000000;
+	border-width: 1px;
+}
+
+</style>
+
+
+<form action="" method="post">
+Tunnus:<br><input type="text" name="userID"><br>
+Tarina: <br><textarea name="story" rows="10" cols="30"></textarea><br>
+<div id="chart" style="max-width: 600px; max-height: 600px;"></div>
+<input id="dimension1" type="text" name="dimension1">
+<input id="dimension2" type="text" name="dimension2">
+<input id="dimension3" type="text" name="dimension3">
+
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<script src="triangle.js" type="text/javascript" charset="utf-8"></script>
+
+<br>
+<input type="submit">
+</form>
+
+</body>
+</html>
