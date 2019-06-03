@@ -129,7 +129,7 @@ function drawPolygon(){
 		})
 		.attr("stroke","black")
 		.attr("stroke-width",2)
-		.attr("fill", "rgba(0,0,0,0)")
+		.attr("fill", "#FFFFFF")
 		;
 }
 
