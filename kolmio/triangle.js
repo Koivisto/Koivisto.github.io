@@ -24,40 +24,47 @@ initCrosshair();
 initSelection();
 
 var isSelecting = true;
-var isUntouched = true;
+var isEntered = false;
+var isConfirmed = false;
 
 svg
-.on("mouseenter", function (d){
-	if(isUntouched){ 
-		toggleSelectionVisibility();
-		isUntouched = false;
-	}})
 .on("click", function (d){
 	if(isSelecting){
 		var coords = d3.mouse(this);
 		drawFeedback(coords);
 		placeSelection(coords);
-		toggleSelectionVisibility();
 		isSelecting = false;
+		toggleSelectionVisibility();
+		isConfirmed = true;
 	}
 	else{
-		isSelecting = !isSelecting;
+		isSelecting = true;
 		toggleSelectionVisibility();
-		console.log("back at selecting");
 	}
 	})
 .on("mousemove", function (d){
-	if(isSelecting){
-		var coords = d3.mouse(this);
-		drawFeedback(coords);
+	var coords = d3.mouse(this);
+	var isOnArea = isOnTriangle(coords)
+
+	if(isOnArea && !isEntered){
+		isEntered = true;
+		toggleSelectionVisibility();
 	}
-	})
-.on("mouseleave", function (d){
-	if(isSelecting){
-		removeSelection();
-		updateInput(getPolygonMidCoords());
-		initSelection();
-		drawFeedback(getPolygonMidCoords());
+
+	if(!isOnArea && isSelecting && isEntered){
+		drawFeedback(coords);
+		placeSelection(coords);
+		toggleSelectionVisibility();
+		isSelecting = false;
+		isConfirmed = false;
+	}
+	else if(isOnArea && !isSelecting && !isConfirmed && isEntered){
+		isSelecting = true;
+
+		toggleSelectionVisibility();
+	}
+	else if(isSelecting && isOnArea && isEntered){
+		drawFeedback(coords);
 	}
 	})
 .on("touchmove", function (d){
@@ -66,6 +73,13 @@ svg
 	placeSelection(coords);
 	})
 ;
+
+function isOnTriangle(coords){
+	if(getDimension1Value(coords) <= 0 || getDimension2Value(coords) <= 0 || getDimension3Value(coords) <= 0 ){ 
+		return false;
+	}
+	return true;
+}
 
 function drawFeedback(coords){
 	updateCrosshair(coords);
