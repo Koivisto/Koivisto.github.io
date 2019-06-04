@@ -29,23 +29,42 @@ var isConfirmed = false;
 
 svg
 .on("click", function (d){
-	if(isSelecting){
-		var coords = d3.mouse(this);
+	var coords = d3.mouse(this);
+	var isOnArea = isOnTriangle(coords);
+	//console.log(isOnArea);
+	if(isSelecting && isOnArea){
+		//select
+		console.log("Valittu!");
 		drawFeedback(coords);
 		placeSelection(coords);
 		isSelecting = false;
 		toggleSelectionVisibility();
-		isConfirmed = true;
 	}
 	else{
+		console.log("Ei mitään klikkailla!");
 		isSelecting = true;
+		isEntered = false;
 		toggleSelectionVisibility();
+	}
+	})
+.on("touchmove", function (d){
+	var coords = d3.mouse(this);
+	var isOnArea = isOnTriangle(coords)
+
+	if(isOnArea && !isEntered){
+		isEntered = true;
+		toggleSelectionVisibility();
+
+	}
+	if(isOnArea && isEntered){
+		drawFeedback(coords);
+		placeSelection(coords);
+		isSelecting = false;
 	}
 	})
 .on("mousemove", function (d){
 	var coords = d3.mouse(this);
 	var isOnArea = isOnTriangle(coords)
-
 	if(isOnArea && !isEntered){
 		isEntered = true;
 		toggleSelectionVisibility();
@@ -56,23 +75,23 @@ svg
 		placeSelection(coords);
 		toggleSelectionVisibility();
 		isSelecting = false;
-		isConfirmed = false;
 	}
 	else if(isOnArea && !isSelecting && !isConfirmed && isEntered){
 		isSelecting = true;
-
 		toggleSelectionVisibility();
 	}
 	else if(isSelecting && isOnArea && isEntered){
 		drawFeedback(coords);
 	}
 	})
-.on("touchmove", function (d){
-	var coords = d3.mouse(this);
-	drawFeedback(coords);
-	placeSelection(coords);
-	})
 ;
+
+
+function selectionLogic(coords){
+
+}
+
+
 
 function isOnTriangle(coords){
 	if(getDimension1Value(coords) <= 0 || getDimension2Value(coords) <= 0 || getDimension3Value(coords) <= 0 ){ 
