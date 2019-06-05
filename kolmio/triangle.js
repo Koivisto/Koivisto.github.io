@@ -10,7 +10,6 @@ var svg = d3.select("#chart").append("svg")
 	.attr('viewBox', "0 0 "+elementSize+" "+ elementSize)
 	.attr("preserveAspectRatio", "xMidYMid meet");
 
-
 drawDimensions();
 drawPolygon();
 initDimensionLabels();
@@ -19,37 +18,34 @@ initSelection();
 
 var isSelecting = true;
 var isEntered = false;
-var isConfirmed = false;
 var isSelectionVisible = true;
+var isConfirmed = false;
 
 svg
 .on("click", function (d){
 	var coords = d3.mouse(this);
 	var isOnArea = isOnTriangle(coords);
-	//console.log(isOnArea);
-	if(isSelecting && isOnArea){
-		//select
+	//Is making confirmed selection
+	if(isOnArea && isSelecting && isEntered && !isConfirmed){
 		console.log("Valittu!");
 		drawFeedback(coords);
 		placeSelection(coords);
 		isSelecting = false;
-		toggleSelectionVisibility();
+		isConfirmed = true;
 	}
-	else{
-		console.log("Ei mitään klikkailla!");
+	//Reconsidering by clicking again when confirmed, results in neutralizing
+	else if(isOnArea && isConfirmed){
 		isSelecting = true;
-		isEntered = false;
-		toggleSelectionVisibility();
+		isConfirmed = false;
+		drawFeedback(coords);
+		setSelectionVisibilityOff();
 	}
 	})
 .on("touchmove", function (d){
 	var coords = d3.mouse(this);
-	var isOnArea = isOnTriangle(coords)
-
+	var isOnArea = isOnTriangle(coords);
 	if(isOnArea && !isEntered){
 		isEntered = true;
-		toggleSelectionVisibility();
-
 	}
 	if(isOnArea && isEntered){
 		drawFeedback(coords);
@@ -59,34 +55,34 @@ svg
 	})
 .on("mousemove", function (d){
 	var coords = d3.mouse(this);
-	var isOnArea = isOnTriangle(coords)
-	if(isOnArea && !isEntered){
+	var isOnArea = isOnTriangle(coords);
+	//First time entry
+	if(isOnArea  && isSelecting && !isEntered){
 		isEntered = true;
-		toggleSelectionVisibility();
+		setSelectionVisibilityOff();
 	}
-
-	if(!isOnArea && isSelecting && isEntered){
+	//Is actively selecting
+	else if(isOnArea && isSelecting && isEntered){
 		drawFeedback(coords);
 		placeSelection(coords);
-		toggleSelectionVisibility();
-		isSelecting = false;
 	}
-	else if(isOnArea && !isSelecting && !isConfirmed && isEntered){
+	//When returning to area and the point was made unintentionally to the corner
+	else if(isOnArea && !isSelecting && isEntered && !isConfirmed){
 		isSelecting = true;
-		toggleSelectionVisibility();
-	}
-	else if(isSelecting && isOnArea && isEntered){
-		drawFeedback(coords);
+		setSelectionVisibilityOff();
 	}
 	})
 ;
 
-
-function selectionLogic(coords){
-
+function setSelectionVisibilityOff(){
+	var selection = svg.select("#selection");
+	selection.attr("opacity", 0);
 }
 
-
+function setSelectionVisibilityOn(){
+	var selection = svg.select("#selection");
+	selection.attr("opacity", 1);
+}
 
 function isOnTriangle(coords){
 	if(getDimension1Value(coords) <= 0 || getDimension2Value(coords) <= 0 || getDimension3Value(coords) <= 0 ){ 
@@ -103,6 +99,7 @@ function drawFeedback(coords){
 function placeSelection(coords){
 	updateInput(coords);
 	translateGroup("#selection", coords);
+	setSelectionVisibilityOn();
 }
 
 function updateCrosshair(coords){
@@ -197,7 +194,6 @@ function getCrosshair(id, coords, opacity){
 	var g = svg.append("g")
 		.attr("id", id)
 		.attr("transform", "translate("+coords[0]+","+coords[1]+")")
-		
 	g.append("circle")
 		.attr("cx", 0)
 		.attr("cy", 0)
@@ -208,12 +204,14 @@ function getCrosshair(id, coords, opacity){
 		.attr("id", "asd")
 		.attr("x1", -25)
 		.attr("x2", 25)
+		.attr("opacity", opacity)
 		.attr("stroke","black")
 		.attr("stroke-width",2);
 	g.append("line")
 		.attr("id", "asd")
 		.attr("y1", -25)
 		.attr("y2", 25)
+		.attr("opacity", opacity)
 		.attr("stroke","black")
 		.attr("stroke-width",2);
 	return g;
@@ -221,7 +219,7 @@ function getCrosshair(id, coords, opacity){
 
 function initCrosshair(){
 	var coords = getPolygonMidCoords();
-	getCrosshair("crosshair", coords, 0.5);
+	getCrosshair("crosshair", coords, 0.3);
 }
 
 function initSelection(){
@@ -233,16 +231,7 @@ function removeSelection(){
 	svg.select("#selection").remove();
 }
 
-function toggleSelectionVisibility(){
-	var selection = svg.select("#selection");
-	if(isSelectionVisible){
-		selection.attr("opacity", 0)
-	}
-	else{
-		selection.attr("opacity", 1)
-	}
-	isSelectionVisible = !isSelectionVisible;
-}
+
 
 function updateDimensionLabels(emphasis1, emphasis2, emphasis3){
 	svg.select("#dimension1Label")
