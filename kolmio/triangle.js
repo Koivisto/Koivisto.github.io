@@ -1,22 +1,16 @@
-
+/*Triangle is the shape of this polygon input field*/
 var elementSize = 600;
 var midCoords = [elementSize/2, elementSize/2];
-/*Triangle is the shape of this polygon*/
 var margin = elementSize/6
 var padding = margin/5
 var sideLenght = elementSize-2*margin
 var height = sideLenght*Math.sqrt(3)/2
-
-
-
 var elementWidth = document.getElementById("chart").offsetWidth;
-
 var svg = d3.select("#chart").append("svg")
 	.attr('viewBox', "0 0 "+elementSize+" "+ elementSize)
 	.attr("preserveAspectRatio", "xMidYMid meet");
 
 
-//drawBackground();
 drawDimensions();
 drawPolygon();
 initDimensionLabels();
@@ -26,6 +20,7 @@ initSelection();
 var isSelecting = true;
 var isEntered = false;
 var isConfirmed = false;
+var isSelectionVisible = true;
 
 svg
 .on("click", function (d){
@@ -238,7 +233,6 @@ function removeSelection(){
 	svg.select("#selection").remove();
 }
 
-var isSelectionVisible = true;
 function toggleSelectionVisibility(){
 	var selection = svg.select("#selection");
 	if(isSelectionVisible){
@@ -331,11 +325,3 @@ function mapDistanceToValue(distance){
 	if (sideLenght-distance <= 0) { return 0;}
 	else { return Math.sqrt(sideLenght-distance)/20;}
 }
-
-function drawBackground(){
-	svg.append("rect")
-		.attr("width", "100%")
-		.attr("height", "100%")
-		.attr("fill", "#FFFFFF");
-}
-
