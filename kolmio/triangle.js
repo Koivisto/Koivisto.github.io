@@ -1,6 +1,7 @@
 /*Triangle is the shape of this polygon input field*/
+
+/*Global variables*/
 var elementSize = 600;
-var midCoords = [elementSize/2, elementSize/2];
 var margin = elementSize/6
 var padding = margin/5
 var sideLenght = elementSize-2*margin
@@ -9,18 +10,27 @@ var elementWidth = document.getElementById("chart").offsetWidth;
 var svg = d3.select("#chart").append("svg")
 	.attr('viewBox', "0 0 "+elementSize+" "+ elementSize)
 	.attr("preserveAspectRatio", "xMidYMid meet");
+var linearScaleFontSize = d3.scaleLinear()
+		.domain([0,1])
+		.range([20,40]);
+var fontWeightScale = d3.scaleLinear()
+		.domain([0,1])
+		.range([100,900]);
 
+/*Init*/
 drawDimensions();
 drawPolygon();
 initDimensionLabels();
 initCrosshair();
 initSelection();
 
+/*Interaction related state variables*/
 var isSelecting = true;
 var isEntered = false;
 var isSelectionVisible = true;
 var isConfirmed = false;
 
+/*Interaction handlers*/
 svg
 .on("click", function (d){
 	var coords = d3.mouse(this);
@@ -71,8 +81,7 @@ svg
 		isSelecting = true;
 		setSelectionVisibilityOff();
 	}
-	})
-;
+	});
 
 function setSelectionVisibilityOff(){
 	var selection = svg.select("#selection");
@@ -122,23 +131,16 @@ function updateInput(coords){
 }
 
 function drawDimensions(){
-	var dimension1coords = getDimension1Coordinates();
+	drawDimensionPoint(getDimension1Coordinates());
+	drawDimensionPoint(getDimension2Coordinates());
+	drawDimensionPoint(getDimension3Coordinates());
+}
+
+function drawDimensionPoint(coords){
 	svg.append("circle")
 		.attr("r", 5)
-		.attr("cx", dimension1coords[0])
-		.attr("cy", dimension1coords[1])
-		.attr("fill", "#000000");
-	var dimension2coords = getDimension2Coordinates();
-	svg.append("circle")
-		.attr("r", 5)
-		.attr("cx", dimension2coords[0])
-		.attr("cy", dimension2coords[1])
-		.attr("fill", "#000000");
-	var dimension3coords = getDimension3Coordinates();
-	svg.append("circle")
-		.attr("r", 5)
-		.attr("cx", dimension3coords[0])
-		.attr("cy", dimension3coords[1])
+		.attr("cx", coords[0])
+		.attr("cy", coords[1])
 		.attr("fill", "#000000");
 }
 
@@ -154,8 +156,7 @@ function drawPolygon(){
 		})
 		.attr("stroke","black")
 		.attr("stroke-width",2)
-		.attr("fill", "#FFFFFF")
-		;
+		.attr("fill", "#FFFFFF");
 }
 
 function initDimensionLabels(){
@@ -225,13 +226,12 @@ function initCrosshair(){
 function initSelection(){
 	var coords = getPolygonMidCoords();
 	getCrosshair("selection", coords, 1);
+	updateEmphasis(coords);
 }
 
 function removeSelection(){
 	svg.select("#selection").remove();
 }
-
-
 
 function updateDimensionLabels(emphasis1, emphasis2, emphasis3){
 	svg.select("#dimension1Label")
@@ -245,25 +245,16 @@ function updateDimensionLabels(emphasis1, emphasis2, emphasis3){
 		.attr("font-weight", calculateFontWeight(emphasis3));
 }
 
-var linearScale = d3.scaleLinear()
-		.domain([0,1])
-		.range([20,40]);
-
 function calculateLabelSize(value){
-	var calc = linearScale(value);
-	//var calc = value * 20;
+	var calc = linearScaleFontSize(value);
 	var str = calc.toString();
 	var fontSize = str+"px";
 	return fontSize;
 }
-var fontWeightScale = d3.scaleLinear()
-		.domain([0,1])
-		.range([100,900]);
 
 function calculateFontWeight(value){
 	return fontWeightScale(value);
 }
-
 
 function getPolygonMidCoords(){
 	return [elementSize/2, margin + sideLenght*Math.sqrt(3)/3];
@@ -309,8 +300,7 @@ function getDimensionValue(coords, dimCoords){
 }
 
 function mapDistanceToValue(distance){
-	//return sideLenght-distance;
-	//return elementSize/distance;
 	if (sideLenght-distance <= 0) { return 0;}
-	else { return Math.sqrt(sideLenght-distance)/20;}
+	//Gives values from [1,0[
+	else { return Math.sqrt(sideLenght-distance)/Math.sqrt(sideLenght);}
 }
