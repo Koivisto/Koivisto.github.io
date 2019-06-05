@@ -17,6 +17,9 @@ var linearScaleFontSize = d3.scaleLinear()
 var fontWeightScale = d3.scaleLinear()
 		.domain([0,1])
 		.range([100,900]);
+var crosshairScale = d3.scaleLinear()
+		.domain([elementSize/2,elementSize])
+		.range([50, 25]);
 
 /*Init elements*/
 drawDimensions();
@@ -285,6 +288,8 @@ function updateDimensionLabels(emphasis1, emphasis2, emphasis3){
 }
 
 function getCrosshair(id, coords, opacity){
+	var radius = crosshairScale(elementWidth);
+
 	var g = svg.append("g")
 		.attr("id", id)
 		.attr("transform", "translate("+coords[0]+","+coords[1]+")")
@@ -296,15 +301,15 @@ function getCrosshair(id, coords, opacity){
 		.attr("fill", "black")
 	g.append("line")
 		.attr("id", "asd")
-		.attr("x1", -25)
-		.attr("x2", 25)
+		.attr("x1", -radius)
+		.attr("x2", radius)
 		.attr("opacity", opacity)
 		.attr("stroke","black")
 		.attr("stroke-width",2);
 	g.append("line")
 		.attr("id", "asd")
-		.attr("y1", -25)
-		.attr("y2", 25)
+		.attr("y1", -radius)
+		.attr("y2", radius)
 		.attr("opacity", opacity)
 		.attr("stroke","black")
 		.attr("stroke-width",2);
