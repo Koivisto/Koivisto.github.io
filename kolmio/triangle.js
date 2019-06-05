@@ -17,9 +17,9 @@ var fontWeightScale = d3.scaleLinear()
 		.domain([0,1])
 		.range([100,900]);
 
-/*Init*/
+/*Init elements*/
 drawDimensions();
-drawPolygon();
+drawTriangle();
 initDimensionLabels();
 initCrosshair();
 initSelection();
@@ -83,6 +83,7 @@ svg
 	}
 	});
 
+/*Helper functions*/
 function setSelectionVisibilityOff(){
 	var selection = svg.select("#selection");
 	selection.attr("opacity", 0);
@@ -124,10 +125,88 @@ function updateEmphasis (coords){
 	updateDimensionLabels(getDimension1Value(coords), getDimension2Value(coords), getDimension3Value(coords));
 }
 
+function removeSelection(){
+	svg.select("#selection").remove();
+}
+
+function calculateLabelSize(value){
+	var calc = linearScaleFontSize(value);
+	var str = calc.toString();
+	var fontSize = str+"px";
+	return fontSize;
+}
+
+function calculateFontWeight(value){
+	return fontWeightScale(value);
+}
+
+/*Dimension value handling*/
 function updateInput(coords){
 	document.getElementById("dimension1").value = getDimension1Value(coords);
 	document.getElementById("dimension2").value = getDimension2Value(coords);
 	document.getElementById("dimension3").value = getDimension3Value(coords);
+}
+
+function getDimensionValue(coords, dimCoords){
+	var dx = coords[0] - dimCoords[0];
+	var dy = coords[1] - dimCoords[1];
+	var distance = Math.sqrt(dx * dx + dy * dy)
+	var mappedValue = mapDistanceToValue(distance);
+	return mappedValue;
+}
+
+function mapDistanceToValue(distance){
+	if (sideLenght-distance <= 0) { return 0;}
+	//Gives values from [1,0[
+	else { return Math.sqrt(sideLenght-distance)/Math.sqrt(sideLenght);}
+}
+
+/*Coordinate functions*/
+function getPolygonMidCoords(){
+	return [elementSize/2, margin + sideLenght*Math.sqrt(3)/3];
+}
+
+function getTriangleCornerCoords(cornerNumber){
+	if (cornerNumber == 1){ return [elementSize/2, margin] }
+	if (cornerNumber == 2){ return [elementSize-margin, height+margin] }
+	if (cornerNumber == 3){ return [margin, height+margin] }
+	else{return [0, 0]}
+}
+
+function getDimension1Coordinates(){
+	return getTriangleCornerCoords(1);
+}
+
+function getDimension2Coordinates(){
+	return getTriangleCornerCoords(2);
+}
+
+function getDimension3Coordinates(){
+	return getTriangleCornerCoords(3);
+}
+
+function getDimension1Value(coords){
+	return getDimensionValue(coords, getDimension1Coordinates())
+}
+
+function getDimension2Value(coords){
+	return getDimensionValue(coords, getDimension2Coordinates())
+}
+
+function getDimension3Value(coords){
+	return getDimensionValue(coords, getDimension3Coordinates())
+}
+
+/*Visual output related functions*/
+function initCrosshair(){
+	var coords = getPolygonMidCoords();
+	getCrosshair("crosshair", coords, 0.3);
+}
+
+function initSelection(){
+	var coords = getPolygonMidCoords();
+	getCrosshair("selection", coords, 1);
+	updateEmphasis(coords);
 }
 
 function drawDimensions(){
@@ -144,7 +223,7 @@ function drawDimensionPoint(coords){
 		.attr("fill", "#000000");
 }
 
-function drawPolygon(){
+function drawTriangle(){
 	var d1c = getDimension1Coordinates();
 	var d2c = getDimension2Coordinates();
 	var d3c = getDimension3Coordinates();
@@ -191,6 +270,18 @@ function initDimensionLabels(){
 		.text("Tuskastuminen");
 }
 
+function updateDimensionLabels(emphasis1, emphasis2, emphasis3){
+	svg.select("#dimension1Label")
+		.attr("font-size", calculateLabelSize(emphasis1))
+		.attr("font-weight", calculateFontWeight(emphasis1));
+	svg.select("#dimension2Label")
+		.attr("font-size", calculateLabelSize(emphasis2))
+		.attr("font-weight", calculateFontWeight(emphasis2));
+	svg.select("#dimension3Label")
+		.attr("font-size", calculateLabelSize(emphasis3))
+		.attr("font-weight", calculateFontWeight(emphasis3));
+}
+
 function getCrosshair(id, coords, opacity){
 	var g = svg.append("g")
 		.attr("id", id)
@@ -216,91 +307,4 @@ function getCrosshair(id, coords, opacity){
 		.attr("stroke","black")
 		.attr("stroke-width",2);
 	return g;
-}
-
-function initCrosshair(){
-	var coords = getPolygonMidCoords();
-	getCrosshair("crosshair", coords, 0.3);
-}
-
-function initSelection(){
-	var coords = getPolygonMidCoords();
-	getCrosshair("selection", coords, 1);
-	updateEmphasis(coords);
-}
-
-function removeSelection(){
-	svg.select("#selection").remove();
-}
-
-function updateDimensionLabels(emphasis1, emphasis2, emphasis3){
-	svg.select("#dimension1Label")
-		.attr("font-size", calculateLabelSize(emphasis1))
-		.attr("font-weight", calculateFontWeight(emphasis1));
-	svg.select("#dimension2Label")
-		.attr("font-size", calculateLabelSize(emphasis2))
-		.attr("font-weight", calculateFontWeight(emphasis2));
-	svg.select("#dimension3Label")
-		.attr("font-size", calculateLabelSize(emphasis3))
-		.attr("font-weight", calculateFontWeight(emphasis3));
-}
-
-function calculateLabelSize(value){
-	var calc = linearScaleFontSize(value);
-	var str = calc.toString();
-	var fontSize = str+"px";
-	return fontSize;
-}
-
-function calculateFontWeight(value){
-	return fontWeightScale(value);
-}
-
-function getPolygonMidCoords(){
-	return [elementSize/2, margin + sideLenght*Math.sqrt(3)/3];
-}
-
-function getTriangleCornerCoords(cornerNumber){
-	if (cornerNumber == 1){ return [elementSize/2, margin] }
-	if (cornerNumber == 2){ return [elementSize-margin, height+margin] }
-	if (cornerNumber == 3){ return [margin, height+margin] }
-	else{return [0, 0]}
-}
-
-function getDimension1Coordinates(){
-	return getTriangleCornerCoords(1);
-}
-
-function getDimension2Coordinates(){
-	return getTriangleCornerCoords(2);
-}
-
-function getDimension3Coordinates(){
-	return getTriangleCornerCoords(3);
-}
-
-function getDimension1Value(coords){
-	return getDimensionValue(coords, getDimension1Coordinates())
-}
-
-function getDimension2Value(coords){
-	return getDimensionValue(coords, getDimension2Coordinates())
-}
-
-function getDimension3Value(coords){
-	return getDimensionValue(coords, getDimension3Coordinates())
-}
-
-function getDimensionValue(coords, dimCoords){
-	var dx = coords[0] - dimCoords[0];
-	var dy = coords[1] - dimCoords[1];
-	var distance = Math.sqrt(dx * dx + dy * dy)
-	var mappedValue = mapDistanceToValue(distance);
-	return mappedValue;
-}
-
-function mapDistanceToValue(distance){
-	if (sideLenght-distance <= 0) { return 0;}
-	//Gives values from [1,0[
-	else { return Math.sqrt(sideLenght-distance)/Math.sqrt(sideLenght);}
 }
