@@ -1,4 +1,5 @@
 /*Triangle is the shape of this polygon input field*/
+/*Copyright: Aarne Leinonen, 2019*/
 
 /*Global variables*/
 var elementSize = 600;
@@ -37,7 +38,6 @@ svg
 	var isOnArea = isOnTriangle(coords);
 	//Is making confirmed selection
 	if(isOnArea && isSelecting && isEntered && !isConfirmed){
-		console.log("Valittu!");
 		drawFeedback(coords);
 		placeSelection(coords);
 		isSelecting = false;
@@ -54,9 +54,11 @@ svg
 .on("touchmove", function (d){
 	var coords = d3.mouse(this);
 	var isOnArea = isOnTriangle(coords);
+	//First time entry by touching
 	if(isOnArea && !isEntered){
 		isEntered = true;
 	}
+	//Is touching and selecting, when lifted selection remains at last touch
 	if(isOnArea && isEntered){
 		drawFeedback(coords);
 		placeSelection(coords);
@@ -107,7 +109,7 @@ function drawFeedback(coords){
 }
 
 function placeSelection(coords){
-	updateInput(coords);
+	updateInputOnForm(coords);
 	translateGroup("#selection", coords);
 	setSelectionVisibilityOn();
 }
@@ -141,7 +143,7 @@ function calculateFontWeight(value){
 }
 
 /*Dimension value handling*/
-function updateInput(coords){
+function updateInputOnForm(coords){
 	document.getElementById("dimension1").value = getDimension1Value(coords);
 	document.getElementById("dimension2").value = getDimension2Value(coords);
 	document.getElementById("dimension3").value = getDimension3Value(coords);
