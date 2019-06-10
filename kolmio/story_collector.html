@@ -1,6 +1,7 @@
 <html>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 </head>
 
 <body style="background-color: #ebd1cb; font-family: 'Open Sans';">
@@ -42,10 +43,10 @@ textarea{
 </style>
 
 <div class="center">
-
-<form action="" method="post">
-Tunnus:<br><input type="text" name="userID"><br>
-Tarina: <br><textarea name="story" rows="10" cols="30"></textarea><br>
+<!-- action="handleForm()" method="post"-->
+<form id="story-form">
+Tunnus:<br><input id="user-id" type="text" name="userID"><br>
+Tarina: <br><textarea  id="story" name="story" rows="10" cols="30"></textarea><br>
 <div id="chart" style="max-width: 600px; max-height: 600px;"></div>
 <input id="dimension1" type="text" name="dimension1">
 <input id="dimension2" type="text" name="dimension2">
@@ -60,5 +61,6 @@ Tarina: <br><textarea name="story" rows="10" cols="30"></textarea><br>
 
 </div>
 
+<script src="formHandler.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>
