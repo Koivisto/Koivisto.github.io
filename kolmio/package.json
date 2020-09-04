@@ -4,7 +4,7 @@
 		"watch": "nodemon helloNode.js"
 	},
 	"dependencies": {
-		"airtable": "^0.6.0",
+		"airtable": "^0.7.2",
 		"body-parser": "^1.19.0",
 		"dotenv": "^8.0.0",
 		"express": "^4.17.1"
