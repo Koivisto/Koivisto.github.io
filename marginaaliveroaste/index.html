@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marginaaliverolaskuri vuodelle 2023 - Liberaalipuolue ja maksat vähemmän</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <style>
+        body {
+            font-family: 'Raleway', sans-serif;
+        }
+
+        /* Style for the h1 title */
+        h1 {
+            padding-top: 200px; /* Add 300px padding from the top */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px; /* Add 20px top margin */
+            border: 1px solid #ccc; /* Light grey border */
+        }
+
+        th, td {
+            padding: 0px 10px 0px 10px; /* 20px padding divided by 2 (for top and bottom) */
+            border: 1px solid #ccc; /* Light grey border */
+            text-align: center; /* Center-align content */
+        }
+
+        th {
+            background-color: #f2f2f2; /* Light grey background for header */
+        }
+
+        /* Add 5px margin to all buttons */
+        button {
+            margin: 5px;
+        }
+
+        /* Style the input field */
+        input[type="number"] {
+            font-size: 1em; /* Set font size to 3em */
+            padding: 10px; /* Adjust padding as needed */
+            border: 1px solid #ccc; /* Light grey border */
+            border-radius: 5px; /* Add rounded corners */
+            max-width: 400px; /* Set max width to 400px */
+            width: 100%; /* Make the input field 100% wide */
+            box-sizing: border-box; /* Include padding and border in the width */
+            margin: 0 auto; /* Center horizontally */
+            text-align: center; /* Center-align text value */
+        }
+
+        /* Center header, label, and input */
+        #headerContainer {
+            max-width: 700px; /* Set max width to 700px */
+            margin: 0 auto; /* Center horizontally */
+            text-align: center; /* Center-align content */
+        }
+
+        label {
+            display: block; /* Display label as a block element */
+            margin-bottom: 10px; /* Add space below label */
+        }
+        /* Style for the triangular corner */
+        #topCorner {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-top: 100px solid #F9B000; /* Adjust the size and color as needed */
+            border-left: 200px solid transparent;
+        }
+
+        /* Style for the logo image */
+        #logo {
+            position: absolute;
+            top: -90px; /* Adjust the top margin as needed */
+            right: 10px; /* Adjust the right margin as needed */
+            width: 200px; /* Adjust the width as needed */
+            height: auto; /* Maintain aspect ratio */
+        }
+    </style>
+</head>
+<body>
+    <!-- Triangular corner with logo and link -->
+    <a href="https://www.liberaalipuolue.fi" target="_blank">
+        <div id="topCorner">
+            <img src="logo-liberaalipuolue.png" alt="Liberaalipuolue" id="logo">
+        </div>
+    </a>
+    <div id="headerContainer">
+        <h1>Marginaaliverolaskuri vuodelle 2023</h1>
+        <label for="salaryInput">Palkka kuukaudessa (euroina):</label><br>
+        <input type="number" id="salaryInput" min="0" step="100" placeholder="3700 on suomalaisen keskiarvopalkka"><br>
+        <button onclick="calculateTax()">Laske veroprosentti joka päivälle</button>
+    </div>
+
+    <div id="taxTable"></div>
+
+    <script src="taxCalculator.js"></script>
+</body>
+</html>
