@@ -1,3 +1,20 @@
+/**
+ * taxCalculator.js
+ *
+ * Description: This script calculates daily marginal tax rates and generates ICS (iCalendar) files
+ * or Google Calendar links for each day of the year 2023 based on a provided monthly salary and 
+ * Finnish marginaltax rates.
+ *
+ * Author: Aarne Leinonen, 2023
+ * 
+ * Copyright: CCBY 4.0
+ * The content is under a Creative Commons Attribution 4.0 International License, allowing sharing 
+ * and adaptation with attribution.
+ *
+ * Powered by GPT-3.5 (OpenAI)
+ * Version: 1.0
+ */
+
 // Define Finnish marginal tax rates https://www.vero.fi/henkiloasiakkaat/verokortti-ja-veroilmoitus/tulot/ansiotulot/
 const marginalTaxRates = [
 {maxIncome: 1000, monthlySalary: 80, taxRate: 0.087, marginalTaxRate: 0.087, netIncome: 914, minIncome: 0},
@@ -290,6 +307,10 @@ const marginalTaxRates = [
 {maxIncome: 1000000, monthlySalary: 80000, taxRate: 0.565, marginalTaxRate: 0.580, netIncome: 43506, minIncome: 950000}
 ];
 
+/**
+ * Calculates and displays daily marginal tax rates based on a monthly salary input.
+ * Generates a tax table for each day of the year, providing tax rates and options to download or add events to Google Calendar.
+ */
 function calculateTax() {
     const salaryInput = document.getElementById("salaryInput");
     const salary = parseFloat(salaryInput.value);
@@ -355,6 +376,12 @@ function calculateTax() {
 
 }
 
+/**
+ * Finds and returns the applicable marginal tax rate based on the given income.
+ *
+ * @param {number} income - The cumulative income for which to determine the marginal tax rate.
+ * @returns {number} - The applicable marginal tax rate as a decimal (e.g., 0.123 for 12.3%).
+ */
 function findApplicableTaxRate(income) {
     for (const rate of marginalTaxRates) {
         if (income >= rate.minIncome && income < rate.maxIncome) {
@@ -364,18 +391,24 @@ function findApplicableTaxRate(income) {
     return 0;
 }
 
+/**
+ * Generates an ICS (iCalendar) file with event details for a specific date and tax rate.
+ *
+ * @param {string} date - The date for the event in "YYYY-MM-DD" format.
+ * @param {number} taxRate - The marginal tax rate as a decimal number (e.g., 0.123 for 12.3%).
+ * @returns {string} - A data URI containing the ICS content.
+ */
 function generateICSFile(date, taxRate) {
-    console.log("generoimassa ICS ");
-    console.log(date);
-    console.log(taxRate);
-    // Format the date in ISO 8601 date-time format (e.g., "20240103T000000Z")
-    const formattedDate = new Date(`${date}T00:00:00Z`).toISOString().replace(/[-:]/g, '').slice(0, -5);
+    // Format the date in ISO 8601 date format (e.g., "20240103")
+    const formattedDate = date.replace(/-/g, '');
 
+    // Generate the DTSTAMP (timestamp) for the ICS file
     const dtstamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, -5);
 
     // Include the description content
-    const description = `Tänään työstäsi jää käteen vain ${100 - taxRate}%. Äänestä vaaleissa Liberaalipuolue - Vapaus valita jotta sitä jäisi enemmän.`;
+    const description = `Päivän marginaaliveroasteesi on ${taxRate.toFixed(1)} %. Tänään työstäsi jää käteen vain ${100 - taxRate} %. Äänestä vaaleissa Liberaalipuolue - Vapaus valita jotta sitä jäisi enemmän.`;
 
+    // Construct the ICS content in string format
     const icsContent = `BEGIN:VCALENDAR
 PRODID:-//Example Corp.//CalDAV Client//EN
 VERSION:2.0
@@ -397,6 +430,13 @@ END:VCALENDAR`;
     return dataURI;
 }
 
+/**
+ * Creates a button element that, when clicked, allows users to download an ICS file.
+ *
+ * @param {string} date - The date for the event in "YYYY-MM-DD" format.
+ * @param {number} taxRate - The marginal tax rate as a decimal number (e.g., 0.123 for 12.3%).
+ * @returns {HTMLButtonElement} - A button element that triggers the ICS file download when clicked.
+ */
 function createDownloadButton(date, taxRate) {
     const button = document.createElement("button");
     button.textContent = "Download ICS";
@@ -414,6 +454,13 @@ function createDownloadButton(date, taxRate) {
     return button;
 }
 
+/**
+ * Creates a button element that, when clicked, adds an event to Google Calendar.
+ *
+ * @param {string} date - The date for the event in "YYYY-MM-DD" format.
+ * @param {number} taxRate - The marginal tax rate as a decimal number (e.g., 0.123 for 12.3%).
+ * @returns {HTMLButtonElement} - A button element that triggers the Google Calendar event creation when clicked.
+ */
 function createGoogleCalendarButton(date, taxRate) {
     const button = document.createElement("button");
     button.textContent = "Add to Google Calendar";
@@ -427,12 +474,19 @@ function createGoogleCalendarButton(date, taxRate) {
     return button;
 }
 
+/**
+ * Generates a Google Calendar URL for creating an event with a specific tax rate.
+ *
+ * @param {string} date - The date for the event in "YYYY-MM-DD" format.
+ * @param {number} taxRate - The marginal tax rate as a decimal number (e.g., 0.123 for 12.3%).
+ * @returns {string} - A Google Calendar URL for creating the event.
+ */
 function generateGoogleCalendarUrl(date, taxRate) {
-    // Format the date in ISO 8601 date-time format (e.g., "20240103T000000Z")
-    const formattedDate = new Date(`${date}T00:00:00Z`).toISOString().replace(/[-:]/g, '').slice(0, -5);
+    // Format the date in ISO 8601 date format (e.g., "20240103")
+    const formattedDate = date.replace(/-/g, '');
 
     // Include the event details in the Google Calendar URL
-    const eventDetails = encodeURIComponent(`Päivän ${taxRate.toFixed(1)} % marginaaliveroasteesi.\nTänään työstäsi jää käteen vain ${100 - taxRate}%. Äänestä vaaliessa Liberaalipuolue - Vapaus valita jotta sitä jäisi enemmän.`);
+    const eventDetails = encodeURIComponent(`Päivän marginaaliveroasteesi on ${taxRate.toFixed(1)} %.\nTänään työstäsi jää käteen vain ${100 - taxRate} %. Äänestä vaaleissa Liberaalipuolue - Vapaus valita jotta sitä jäisi enemmän.`);
 
     // Google Calendar event creation URL format
     const googleCalendarUrl = `https://www.google.com/calendar/event?action=TEMPLATE&text=${taxRate.toFixed(1)}%20%25%20marginaaliveroaste&dates=${formattedDate}/${formattedDate}&details=${eventDetails}&location=&trp=false`;
